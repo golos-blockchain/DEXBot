@@ -70,7 +70,7 @@ setup(
         "alembic==1.0.11",
     ],
     dependency_links=[
-        'git+git://github.com/graphene-blockchain/python-bitshares@for_dexbot#egg=bitshares'
+        'git+git://github.com/golos-blockchain/python-bitshares@for_dexbot#egg=bitshares'
     ],
     include_package_data=True,
 )
