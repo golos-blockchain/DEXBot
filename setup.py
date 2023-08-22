@@ -55,7 +55,7 @@ setup(
         "aiohttp==3.7.4",
         "requests==2.22.0",
         "yarl==1.6.3",
-        "ccxt==1.58.17",
+        "ccxt==1.59.1",
         "pywaves==0.8.20",
         "graphenelib==1.2.0",
         "bitshares",
