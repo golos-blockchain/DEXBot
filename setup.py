@@ -60,12 +60,13 @@ setup(
         "uptick==0.2.4",
         "ruamel.yaml>=0.15.37",
         "appdirs==1.4.3",
-        "pycryptodomex==3.6.4",
+        "pycryptodomex==3.18.0",
         "websocket-client==0.56.0",
         "sdnotify==0.3.2",
         "sqlalchemy==1.3.0",
         "click==7.0",
         "alembic==1.0.11",
+        "pyopenssl==23.2.0"
     ],
     dependency_links=[
         'git+git://github.com/golos-blockchain/python-bitshares@for_dexbot#egg=bitshares'
