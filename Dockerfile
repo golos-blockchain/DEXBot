@@ -20,6 +20,7 @@ RUN set -xe ;\
     add-apt-repository ppa:deadsnakes/ppa ;\
     apt-get install -y --no-install-recommends iputils-ping gcc make libssl-dev python3.8 python3-pip python3.8-dev python3-setuptools \
         python3-async whiptail git ;\
+    apt-get install -y --reinstall systemd ;\
     apt-get clean ;\
     rm -rf /var/lib/apt/lists/*
 
