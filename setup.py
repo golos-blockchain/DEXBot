@@ -48,29 +48,28 @@ setup(
     cmdclass=cmd_class,
     entry_points={'console_scripts': console_scripts},
     install_requires=[
-        "pyqt5==5.10",
-        "pyqt-distutils==0.7.3",
         "pyinstaller==3.4",
         "click-datetime==0.2",
         "aiohttp==3.7.4",
         "requests==2.22.0",
         "yarl==1.6.3",
-        "ccxt==1.58.17",
+        "ccxt==1.59.1",
         "pywaves==0.8.20",
         "graphenelib==1.2.0",
         "bitshares",
         "uptick==0.2.4",
         "ruamel.yaml>=0.15.37",
         "appdirs==1.4.3",
-        "pycryptodomex==3.6.4",
+        "pycryptodomex==3.18.0",
         "websocket-client==0.56.0",
         "sdnotify==0.3.2",
         "sqlalchemy==1.3.0",
         "click==7.0",
         "alembic==1.0.11",
+        "pyopenssl==23.2.0"
     ],
     dependency_links=[
-        'git+git://github.com/graphene-blockchain/python-bitshares@for_dexbot#egg=bitshares'
+        'git+git://github.com/golos-blockchain/python-bitshares@for_dexbot#egg=bitshares'
     ],
     include_package_data=True,
 )
