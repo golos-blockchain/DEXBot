@@ -55,7 +55,7 @@ setup(
         "yarl==1.6.3",
         "ccxt==1.59.1",
         "pywaves==0.8.20",
-        "graphenelib==1.2.0",
+        "graphenelib==1.4.0",
         "bitshares",
         "uptick==0.2.4",
         "ruamel.yaml>=0.15.37",
