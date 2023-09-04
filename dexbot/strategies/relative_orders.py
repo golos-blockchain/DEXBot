@@ -326,9 +326,13 @@ class Strategy(StrategyBase):
 
         # Exclude own orders from orderbook if needed
         if exclude_own_orders:
-            market_buy_orders = self.get_market_buy_orders(depth=self.fetch_depth)
+            market_buy_orders = self.get_market_buy_orders(depth=50)
             own_buy_orders_ids = [order['id'] for order in self.get_own_buy_orders()]
-            market_buy_orders = [order for order in market_buy_orders if order['id'] not in own_buy_orders_ids]
+            # If no orders at all - not exclude
+            if len(own_buy_orders_ids) < len(market_buy_orders) or len(market_buy_orders) == 0:
+                market_buy_orders = [order for order in market_buy_orders if order['id'] not in own_buy_orders_ids]
+            else:
+                self.log.info('All orders are mine, so use price from them')
 
         # In case amount is not given, return price of the highest buy order on the market
         if quote_amount == 0 and base_amount == 0:
@@ -408,9 +412,13 @@ class Strategy(StrategyBase):
 
         # Exclude own orders from orderbook if needed
         if exclude_own_orders:
-            market_sell_orders = self.get_market_sell_orders(depth=self.fetch_depth)
+            market_sell_orders = self.get_market_sell_orders(depth=50)
             own_sell_orders_ids = [order['id'] for order in self.get_own_sell_orders()]
-            market_sell_orders = [order for order in market_sell_orders if order['id'] not in own_sell_orders_ids]
+            # If no orders at all - not exclude
+            if len(own_sell_orders_ids) < len(market_sell_orders) or len(market_sell_orders) == 0:
+                market_sell_orders = [order for order in market_sell_orders if order['id'] not in own_sell_orders_ids]
+            else:
+                self.log.info('All orders are mine, so use price from them')
 
         # In case amount is not given, return price of the lowest sell order on the market
         if quote_amount == 0 and base_amount == 0:
