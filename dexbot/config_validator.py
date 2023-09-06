@@ -54,9 +54,9 @@ class ConfigValidator:
 
         # Load all accounts with corresponding public key from the blockchain
         account_ids = wallet.getAccountsFromPublicKey(pubkey)
-        account_names = [Account(account_id, bitshares_instance=self.bitshares).name for account_id in account_ids]
+        account_id = Account(account, bitshares_instance=self.bitshares).identifier
 
-        if account in account_names:
+        if account_id in account_ids:
             return True
         else:
             return False

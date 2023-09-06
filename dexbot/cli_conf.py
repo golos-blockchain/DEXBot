@@ -19,6 +19,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import json
 
 from bitshares.account import Account
 
@@ -352,13 +353,18 @@ def configure_dexbot(config, ctx):
                 else:
                     config['workers'][worker_name] = configure_worker(whiptail, {}, validator)
             elif action == 'ADD':
-                add_account(whiptail, bitshares_instance)
+                add_account(validator, whiptail)
             elif action == 'DEL_ACCOUNT':
                 del_account(whiptail, bitshares_instance)
             elif action == 'SHOW':
-                account_list = list_accounts(bitshares_instance)
+                account_list, full_count = list_accounts(bitshares_instance)
                 if account_list:
-                    action = whiptail.menu("Graphene Account List (Name - Type)", account_list)
+                    msg = ''
+                    account_count = len(account_list)
+                    if account_count < full_count:
+                        msg = f'Note: you have access to many accounts, so some of them will be truncated. {account_count} accounts will be shown, when full count is {full_count}.'
+                    whiptail.alert(msg)
+                    whiptail.menu("Graphene Account List (Name - Type)", account_list)
                 else:
                     whiptail.alert('You do not have any graphene accounts in the wallet')
             elif action == 'ADD_NODE':
@@ -408,16 +414,23 @@ def add_account(validator, whiptail):
     if not validator.validate_account_name(account):
         whiptail.alert("Account name does not exist.")
         return False
+
+    print('Validating private key, please wait...')
     if not validator.validate_private_key(account, private_key):
+        print('Failed.')
         whiptail.alert("Private key is invalid")
         return False
+
+    print('Validating private key is active, please wait...')
     if private_key and not validator.validate_private_key_type(account, private_key):
+        print('Failed.')
         whiptail.alert("Please use active private key.")
         return False
 
     # User can supply empty private key if it was added earlier
     if private_key:
         validator.add_private_key(private_key)
+        print('Done.')
         whiptail.alert("Private Key added successfully.")
 
     return account
@@ -432,7 +445,12 @@ def del_account(whiptail, bitshares_instance):
     """
     account = whiptail.prompt("Account Name")
     wallet = bitshares_instance.wallet
-    wallet.removeAccount(account)
+    print('Removing account...')
+    # wallet.removeAccount(account) -- bug in graphenecommon
+    account_data = Account(account, bitshares_instance=bitshares_instance)
+    for authority in account_data["active"]["key_auths"]:
+        wallet.removePrivateKeyFromPublicKey(authority[0])
+    print('Done.')
 
 
 def list_accounts(bitshares_instance):
@@ -446,14 +464,24 @@ def list_accounts(bitshares_instance):
     accounts = []
     pubkeys = bitshares_instance.wallet.getPublicKeys(current=True)
 
+    print('Listing accounts, please wait, it make take a while if there are 100 or more accounts on Golos with same key...')
+
+    full_count = 0
     for pubkey in pubkeys:
         account_ids = bitshares_instance.wallet.getAccountsFromPublicKey(pubkey)
+        count = 0
         for account_id in account_ids:
-            account = Account(account_id, bitshares_instance=bitshares_instance)
-            key_type = bitshares_instance.wallet.getKeyType(account, pubkey)
-            accounts.append({'name': account.name, 'type': key_type})
+            full_count += 1
+            count += 1
+            if count <= 200:
+                account = Account(account_id, bitshares_instance=bitshares_instance)
+                key_type = bitshares_instance.wallet.getKeyType(account, pubkey)
+                accounts.append({'name': account.name, 'type': key_type})
 
     account_list = [
         (str(num), '{} - {}'.format(account['name'], account['type'])) for num, account in enumerate(accounts)
     ]
-    return account_list
+
+    print('Done.')
+
+    return account_list, full_count
