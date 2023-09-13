@@ -500,6 +500,11 @@ class BitsharesOrderEngine(Storage, Events):
         updated_order = self.get_updated_limit_order(order)
         return Order(updated_order, bitshares_instance=self.bitshares)
 
+    def clear_txbuffer(self):
+        self.bitshares.txbuffer["expiration"] = None
+        self.bitshares.txbuffer["ref_block_num"] = None
+        self.bitshares.txbuffer["ref_block_prefix"] = None
+
     def execute(self):
         """
         Execute a bundle of operations.
@@ -507,7 +512,7 @@ class BitsharesOrderEngine(Storage, Events):
         :return: dict: transaction
         """
         self.bitshares.blocking = "head"
-        self.bitshares.txbuffer["expiration"] = None
+        self.clear_txbuffer()
         r = self.bitshares.txbuffer.broadcast()
         self.bitshares.blocking = False
         return r
@@ -589,7 +594,7 @@ class BitsharesOrderEngine(Storage, Events):
             'Placing a buy order with {:.{prec}f} {} @ {:.8f}'.format(base_amount, symbol, price, prec=precision)
         )
 
-        self.bitshares.txbuffer["expiration"] = None
+        self.clear_txbuffer()
 
         # Place the order
         buy_transaction = self.retry_action(
@@ -650,7 +655,7 @@ class BitsharesOrderEngine(Storage, Events):
             'Placing a sell order with {:.{prec}f} {} @ {:.8f}'.format(quote_amount, symbol, price, prec=precision)
         )
 
-        self.bitshares.txbuffer["expiration"] = None
+        self.clear_txbuffer()
 
         # Place the order
         sell_transaction = self.retry_action(
