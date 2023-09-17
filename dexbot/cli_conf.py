@@ -33,6 +33,7 @@ STRATEGIES = [
     {'tag': 'relative', 'class': 'dexbot.strategies.relative_orders', 'name': 'Relative Orders'},
     {'tag': 'stagger', 'class': 'dexbot.strategies.staggered_orders', 'name': 'Staggered Orders'},
     {'tag': 'koth', 'class': 'dexbot.strategies.king_of_the_hill', 'name': 'King of the Hill'},
+    {'tag': 'fix', 'class': 'dexbot.strategies.fix_profit', 'name': 'Fix Profit'},
 ]
 
 # Todo: tags must be unique. Are they really a tags?
@@ -79,6 +80,16 @@ def process_config_element(element, whiptail, worker_config):
     :param whiptail.Whiptail whiptail: instance of Whiptail or NoWhiptail
     :param collections.OrderedDict worker_config: the config dictionary for this worker
     """
+    lamb = None
+    try:
+        lamb = element.lamb
+    except AttributeError:
+        pass
+    if lamb:
+        msg = lamb(worker_config)
+        whiptail.alert(element.title + ' ' + msg)
+        return
+
     if element.description:
         title = '{} - {}'.format(element.title, element.description)
     else:

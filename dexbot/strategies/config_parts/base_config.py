@@ -19,6 +19,8 @@ import collections
 """
 ConfigElement = collections.namedtuple('ConfigElement', 'key type default title description extra')
 
+ConfigMessageElement = collections.namedtuple('ConfigMessageElement', 'key title lamb')
+
 """ Strategies have different needs for the details they want to show for the user. These elements help to build a
     custom details window for the strategy.
 
